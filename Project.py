@@ -7,86 +7,64 @@ import spacy
 import nltk
 import numpy as np
 
-D = pd.read_json("data/ggt2.json")
+D = pd.read_json("data/ggt3.json")
 titles = D['title']
 desc = D['description']
 categ = D['categories']
+mechs = D['mechanics']
 
+# import pickle
+#
+# with open('data\games.json', 'rb') as fp:
+#     games = pickle.load(fp)
 
-import pickle
-
-with open ('data\games.json', 'rb') as fp:
-    games = pickle.load(fp)
-
-categories = list()
+mechanics = list()
 for i in range(len(D)):
-    for c in D['categories'][i]:
-        if c not in categories and c != "":
-            categories.append(c)
-
-for i in range(len(D)):
-    for c in D['categories'][i]:
-        if c == "":
-            D['categories'][i].clear()
-
-categ = D['categories']
+    for m in D['mechanics'][i]:
+        if m not in mechanics:
+            mechanics.append(m)
 
 from gensim.models import Word2Vec
 from gensim.models.keyedvectors import KeyedVectors
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.manifold import TSNE
 
-word = ['economic']
+#Mechanic2Vec
 
-desc_model = {}
-desc_model = Word2Vec(desc, min_count=1, window=2)
-print([x[0] for x in desc_model.wv.most_similar(positive=word)])
-
-categ_model = {}
-
-categ_model = Word2Vec(categ, min_count=1, window=2)
-
-
-print([x[0] for x in categ_model.wv.most_similar(positive=word)])
-german = [x[0] for x in categ_model.wv.most_similar(positive=word)]
-german.append('economic')
-
-word = ['fantasy']
-print([x[0] for x in categ_model.wv.most_similar(positive=word)])
-american = [x[0] for x in categ_model.wv.most_similar(positive=word)]
-american.append('fantasy')
-
-D['rating_avg'] = 0.0
+seq = []
 for i in range(len(D)):
-    D['rating_avg'][i] = games[i].rating_average
+    seq.append(D['mechanics'][i])
 
-D['pt'] = 0
-for i in range(len(D)):
-    D['pt'][i] = games[i].playing_time
+model = {}
+model = Word2Vec(seq, min_count=1)
 
-any_in = lambda a, b: any(i in b for i in a)
+model.train(seq, total_examples=model.corpus_count, epochs=50)
 
-germans = []
-for i in range(len(D)):
-    if any_in(categ[i], german):
-        germans.append(i)
+#Test
 
-G = D.iloc[germans]
+mech = 'Action Drafting'
+a = dict(model.wv.most_similar(positive=mech))
+a_k = a.keys()
+a_v = a.values()
 
-americans = []
-for i in range(len(D)):
-    if i not in germans:
-        if any_in(categ[i], american):
-            americans.append(i)
+#PLOT
+vocab = list(model.wv.vocab)
+X = model[vocab]
+tsne = TSNE(n_components=2)
+X_tsne = tsne.fit_transform(X)
 
-A = D.iloc[americans]
+df = pd.DataFrame(X_tsne, index=vocab, columns=['x', 'y'])
 
+fig = plt.figure()
+ax = fig.add_subplot(1, 1, 1)
 
-avg_num_voters = D['num_voters'].mean()
-D2 = D[D['num_voters'] >= avg_num_voters]
-D2 = D2.reset_index().drop(['index'], 1)
+ax.scatter(df['x'], df['y'])
 
-A2 = A[A['num_voters'] >= avg_num_voters]
-A2 = A2.reset_index().drop(['index'], 1)
-
-G2 = G[G['num_voters'] >= avg_num_voters]
-G2 = G2.reset_index().drop(['index'], 1)
-
+for word, pos in df.iterrows():
+    if word == mech:
+        ax.annotate(word, pos, color='red')
+    elif word in list(a_k):
+        ax.annotate(word, pos, color='orange')
+    else:
+        ax.annotate(word, pos)
