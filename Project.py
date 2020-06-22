@@ -73,7 +73,7 @@ for i in range(len(D)):
 model = {}
 model = Word2Vec(seq, min_count=1, window=2)
 
-model.train(seq, total_examples=model.corpus_count, epochs=80)
+model.train(seq, total_examples=model.corpus_count, epochs=50, compute_loss=True)
 
 vocab = list(model.wv.vocab)
 X = model.wv.__getitem__(vocab)
@@ -103,7 +103,7 @@ from sklearn import metrics
 num_clusters = 3
 
 kmeans = cluster.KMeans(n_clusters=num_clusters)
-kmeans.fit(sim)
+kmeans.fit(X)
 
 labels = kmeans.labels_
 centroids = kmeans.cluster_centers_
@@ -121,20 +121,14 @@ clusters = np.array(labels)
 # plt.ylabel('WCSS')
 # plt.show()
 
-print("Cluster id labels for inputted data")
 print(labels)
-print("Centroids data")
+
 print(centroids)
 
-print("Score (Opposite of the value of X on the K-means objective which is Sum of distances of samples to their closest cluster center):")
-#print(kmeans.score(X))
-print(kmeans.score(sim))
+print(kmeans.score(X))
 
+silhouette_score = metrics.silhouette_score(X, labels, metric='euclidean')
 
-#silhouette_score = metrics.silhouette_score(X, labels, metric='euclidean')
-silhouette_score = metrics.silhouette_score(sim, labels, metric='euclidean')
-
-print("Silhouette_score: ")
 print(silhouette_score)
 
 #PLOT
@@ -142,7 +136,7 @@ print(silhouette_score)
 from sklearn.decomposition import PCA
 pca = PCA(n_components=2)
 
-ps = pca.fit_transform(sim)
+ps = pca.fit_transform(X)
 cs = pca.fit_transform(centroids)
 
 df = pd.DataFrame(ps, index=vocab, columns=['x', 'y'])
