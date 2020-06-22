@@ -100,7 +100,9 @@ sim_df = df = pd.DataFrame(sim, index=vocab, columns=vocab)
 from sklearn import cluster
 from sklearn import metrics
 
-kmeans = cluster.KMeans(n_clusters=2)
+num_clusters = 3
+
+kmeans = cluster.KMeans(n_clusters=num_clusters)
 kmeans.fit(sim)
 
 labels = kmeans.labels_
@@ -163,5 +165,4 @@ for word, pos in df.iterrows():
 
 for i, j in cs:
     ax.scatter(i, j, s=50, c='red', marker='+')
-
 
