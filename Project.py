@@ -9,14 +9,7 @@ import numpy as np
 
 D = pd.read_json("data/ggt3.json")
 titles = D['title']
-desc = D['description']
-categ = D['categories']
 mechs = D['mechanics']
-
-# import pickle
-#
-# with open('data\games.json', 'rb') as fp:
-#     games = pickle.load(fp)
 
 mechanics = list()
 for i in range(len(D)):
@@ -64,9 +57,7 @@ for i in a_mec:
 from gensim.models import Word2Vec
 from gensim.models.keyedvectors import KeyedVectors
 from gensim.models.callbacks import CallbackAny2Vec
-import seaborn as sns
 import matplotlib
-#matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 
@@ -74,20 +65,20 @@ seq = []
 for i in range(len(D)):
     seq.append(D['mechanics'][i])
 
-# class callback(CallbackAny2Vec):
-#
-#     # Callback to print loss after each epoch
-#     def __init__(self):
-#         self.epoch = 0
-#
-#     def on_epoch_end(self, model):
-#         loss = model.get_latest_training_loss()
-#         if self.epoch == 0:
-#             print('Loss after epoch {}: {}'.format(self.epoch, loss))
-#         else:
-#             print('Loss after epoch {}: {}'.format(self.epoch, loss - self.loss_previous_step))
-#         self.epoch += 1
-#         self.loss_previous_step = loss
+class callback(CallbackAny2Vec):
+
+    # Callback to print loss after each epoch
+    def __init__(self):
+        self.epoch = 0
+
+    def on_epoch_end(self, model):
+        loss = model.get_latest_training_loss()
+        if self.epoch == 0:
+            print('Loss after epoch {}: {}'.format(self.epoch, loss))
+        else:
+            print('Loss after epoch {}: {}'.format(self.epoch, loss - self.loss_previous_step))
+        self.epoch += 1
+        self.loss_previous_step = loss
 
 model = {}
 model = Word2Vec(seq, min_count=1, window=2)
@@ -346,3 +337,60 @@ def submit(text):
     ax.barh(y[-t:], - np.array(1 - o_norm.loc[y[-t:]]['AL']), color='orange')
 
 text_box.on_submit(submit)
+
+
+new_game = ['Market', 'Loans', 'Acting']
+
+def plot_custom_game(ngo, ng, ngv):
+    fig = plt.figure()
+    fig.suptitle('CUSTOM GAME')
+    plt.subplots_adjust(left=0.20, top=0.9)
+
+    ax1 = plt.subplot2grid((3,3), (0,0), rowspan=3, colspan=2)
+    ax1.set_title('American                           German')
+    ax1.axvline(x=0, color='black')
+    ax1.barh(list(ng.keys()), np.array(1 - ngv[:, 1]), color='blue')
+    ax1.barh(list(ng.keys()), - np.array(1 - ngv[:, 0]), color='orange')
+
+    ax2 = plt.subplot2grid((3,3), (1,2) , rowspan=3, colspan=2)
+    ax2.bar(['American', 'German'], (1 - np.array(ngo)), color=['orange', 'blue'])
+
+def evaluate_game(mechanics):
+    nm = [[m, mfs[m]] for m in mechanics]
+    nms = np.array(sorted(nm, key=lambda x: x[1]))
+
+    ng = {}
+    for m in nms[:, 0]:
+        ng[m] = [o_norm.loc[m]['AL'], o_norm.loc[m]['GL']]
+
+    ngv = np.array(list(ng.values()))
+    ngo = [np.mean(ngv[:, 0]), np.mean(ngv[:, 1])]
+
+    plot_custom_game(ngo, ng, ngv)
+
+    print('American: ', 1 - ngo[0], '\n' + 'German: ', 1 - ngo[1], '\n')
+
+    for m in reversed(nms[:, 0]):
+        print(m + ": ", '[American: ', 1 - ng[m][0], '],', '[German: ', 1 - ng[m][1], ']')
+
+evaluate_game(new_game)
+
+def game_in_space(mechanics):
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
+
+    ax.scatter(df['x'], df['y'], c=clusters, s=30)
+
+    for m in mechanics:
+        if  m in AL.index:
+            ax.annotate(m, df.loc[m], color='orange')
+        elif m in GL.index:
+            ax.annotate(m, df.loc[m], color='blue')
+
+    for i, j in centroids:
+        ax.scatter(i, j, s=50, c='red', marker='+')
+
+    ax.scatter(df.loc[mechanics]['x'].mean(), df.loc[mechanics]['y'].mean(), marker='*', s=50, c='m')
+    ax.annotate('GAME', (df.loc[mechanics]['x'].mean(), df.loc[mechanics]['y'].mean()), c='m')
+
+game_in_space(new_game)
