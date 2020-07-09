@@ -1,7 +1,7 @@
 # Riccardo-Bona-InforetProject_P6
 
--Il repository contiene due files chiamati 'Project.py' e 'GameEvaluation.py'. Il primo contiene l'intero progetto, il secondo contiene una versione ristretta del codice, 
- utile alle sole funzioni che permettono di valutare quanto 'german' o 'american' sia un set di meccaniche arbitrarie.
+-Il repository contiene due files chiamati 'Project.py' e 'GameEvaluation.py'. Il primo contiene l'intero progetto, il secondo contiene una versione ristretta del 
+ codice, utile alle sole funzioni che permettono di valutare quanto 'german' o 'american' sia un set di meccaniche arbitrarie.
 
 -Il seguente tutorial si riferisce al file 'GameEvaluation.py'.
 
