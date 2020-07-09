@@ -26,10 +26,9 @@ import itertools
 
 ->   mechanics_ranking(top_n)
 
-     dove 'top_n' è un numero intero: permette di visualizzare un grafico delle prime n meccaniche (in ordine discendente di frequenza con la quale appaiono nei giochi
-     del dataframe) con il relativo score di quanto ogni meccanica sia valutata 'german' e 'american' (compreso tra 0 e 1).
+     dove 'top_n' è un numero intero: permette di visualizzare un grafico delle prime n meccaniche (in ordine discendente di frequenza con la quale appaiono nei 
+     giochi del dataframe) con il relativo score di quanto ogni meccanica sia valutata 'german' e 'american' (compreso tra 0 e 1).
  
-
 ->   evaluate_game(mechanics)
 
      dove 'mechanics' è una lista di meccaniche. I 182 valori possibili delle meccaniche sono elencati nel file di testo presente nel repository 'mech_values.txt'.
