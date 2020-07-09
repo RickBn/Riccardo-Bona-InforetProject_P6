@@ -24,12 +24,12 @@ import itertools
  
 -Una volta lanciato lo script è possibile utilizzare tre funzioni:
 
-->   mechanics_ranking(top_n)
+-    mechanics_ranking(top_n)
 
      dove 'top_n' è un numero intero: permette di visualizzare un grafico delle prime n meccaniche (in ordine discendente di frequenza con la quale appaiono nei 
      giochi del dataframe) con il relativo score di quanto ogni meccanica sia valutata 'german' e 'american' (compreso tra 0 e 1).
  
-->   evaluate_game(mechanics)
+-    evaluate_game(mechanics)
 
      dove 'mechanics' è una lista di meccaniche. I 182 valori possibili delle meccaniche sono elencati nel file di testo presente nel repository 'mech_values.txt'.
      La funzione restituisce il valore di quanto in totale l'insieme di meccaniche appartenga alle categorie 'german' e 'american' e i rispettivi valori di ogni
@@ -51,7 +51,7 @@ import itertools
      Market:  [American:  0.26877567968435523 ], [German:  0.5751844041587943 ]
 
 
-->   game_in_space(mechanics)
+-    game_in_space(mechanics)
      
      dove 'mechanics' è la lista di meccaniche utilizzata per la funzione precedente.
      La funzione mostra uno scatterplot nel quale vengono mostrate le meccaniche nello spazio e la posizione rispetto ad esse del gioco arbitrario indicato come lista 
