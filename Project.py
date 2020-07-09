@@ -1,11 +1,16 @@
 import json
 import pandas as pd
-from nltk.tokenize import RegexpTokenizer
-from string import punctuation
-from nltk.corpus import stopwords
-import spacy
-import nltk
 import numpy as np
+from gensim.models import Word2Vec
+from gensim.models.keyedvectors import KeyedVectors
+from gensim.models.callbacks import CallbackAny2Vec
+from sklearn import cluster
+from sklearn import metrics
+from sklearn.decomposition import PCA
+import matplotlib
+import matplotlib.pyplot as plt
+from matplotlib.widgets import TextBox
+import itertools
 
 D = pd.read_json("data/ggt3.json")
 titles = D['title']
@@ -54,12 +59,6 @@ for i in a_mec:
 
 # Mechanic2Vec
 
-from gensim.models import Word2Vec
-from gensim.models.keyedvectors import KeyedVectors
-from gensim.models.callbacks import CallbackAny2Vec
-import matplotlib
-import matplotlib.pyplot as plt
-
 
 seq = []
 for i in range(len(D)):
@@ -88,21 +87,7 @@ model.train(seq, total_examples=model.corpus_count, epochs=40, compute_loss=True
 vocab = list(model.wv.vocab)
 X = model.wv.__getitem__(vocab)
 
-sim = []
-for m1 in vocab:
-    m_sim = []
-    for m2 in vocab:
-        m_sim.append(model.wv.similarity(m1, m2))
-    sim.append(m_sim)
-
-sim_df = df = pd.DataFrame(sim, index=vocab, columns=vocab)
-
 # CLUSTERING
-
-# SKLEARN
-from sklearn import cluster
-from sklearn import metrics
-from sklearn.decomposition import PCA
 
 pca = PCA(n_components=2)
 px = pca.fit_transform(X)
@@ -142,26 +127,6 @@ print(silhouette_score)
 
 df = pd.DataFrame(px, index=vocab, columns=['x', 'y'])
 
-fig = plt.figure()
-ax = fig.add_subplot(1, 1, 1)
-
-ax.scatter(df['x'], df['y'], c=clusters, s=30)
-
-for word, pos in df.iterrows():
-        ax.annotate(word, pos)
-
-for word, pos in df.iterrows():
-    if word in a and word in g:
-        ax.annotate(word, pos, color='blue')
-    elif word in a:
-        ax.annotate(word, pos, color='red')
-    elif word in g:
-        ax.annotate(word, pos, color='green')
-
-for i, j in centroids:
-    ax.scatter(i, j, s=50, c='red', marker='+')
-
-
 #2 CLUSTERS
 cluster_df = pd.DataFrame([], index=vocab, columns=[0, 1])
 cluster_df2 = pd.DataFrame([], index=vocab, columns=[0, 1])
@@ -183,7 +148,6 @@ else:
     ame = 1
     ger = 0
 
-
 AL = cluster_df[cluster_df[ame].isna() == False]
 AL = AL.drop(ger, axis=1)
 AL.columns = ['dist']
@@ -194,13 +158,20 @@ GL = GL.drop(ame, axis=1)
 GL.columns = ['dist']
 GL = GL.sort_values('dist')
 
-a_dists = AL.loc[:]['dist'].values
-a_d_norm = a_dists / max(a_dists)
-AL.insert(1, 'dist_norm', a_d_norm, True)
+#Cluster plot
+fig = plt.figure()
+ax = fig.add_subplot(1, 1, 1)
 
-g_dists = GL.loc[:]['dist'].values
-g_d_norm = g_dists / max(g_dists)
-GL.insert(1, 'dist_norm', g_d_norm, True)
+ax.scatter(df['x'], df['y'], c=clusters, s=30)
+
+for word, pos in df.iterrows():
+    if word in AL.index:
+        ax.annotate(word, pos, color='orange')
+    elif word in GL.index:
+        ax.annotate(word, pos, color='blue')
+
+for i, j in centroids:
+    ax.scatter(i, j, s=50, c='red', marker='+')
 
 #NN
 
@@ -252,15 +223,6 @@ ax.scatter(game_centers['german_center'][0], game_centers['german_center'][1], s
 AV = v_m[v_m['categ'] == 'american'].sort_values('dist')
 GV = v_m[v_m['categ'] == 'german'].sort_values('dist')
 
-a_dists = AV.loc[:]['dist'].values
-a_d_norm = a_dists / max(a_dists)
-AV.insert(3, 'dist_norm', a_d_norm, True)
-
-g_dists = GV.loc[:]['dist'].values
-g_d_norm = g_dists / max(g_dists)
-GV.insert(3, 'dist_norm', g_d_norm, True)
-
-
 #Games centers
 m_dist = pd.DataFrame([], index=df.index, columns=['american_center', 'german_center'])
 
@@ -273,14 +235,6 @@ AC = AC.drop('german_center', axis=1)
 
 GC = m_dist[m_dist['american_center'] > m_dist['german_center']].sort_values('german_center')
 GC = GC.drop('american_center', axis=1)
-
-ac_dists = AC.loc[:]['american_center'].values
-ac_d_norm = ac_dists / max(ac_dists)
-AC.insert(1, 'dist_norm', ac_d_norm, True)
-
-gc_dists = GC.loc[:]['german_center'].values
-gc_d_norm = gc_dists / max(gc_dists)
-GC.insert(1, 'dist_norm', gc_d_norm, True)
 
 colors = []
 for mech in list(df.index):
@@ -301,12 +255,7 @@ for row in o.iterrows():
     o.loc[row[0]] = [m_dist.loc[row[0]]['american_center'], cluster_df2.loc[row[0]][ame], m_dist.loc[row[0]]['german_center'], cluster_df2.loc[row[0]][ger]]
 
 o_max = max(o.max())
-
 o_norm = o / o_max
-
-import itertools
-import matplotlib.pyplot as plt
-from matplotlib.widgets import TextBox
 
 all_mechs = list(itertools.chain(*seq))
 m_freq = {m : all_mechs.count(m) for m in o_norm.index}
@@ -315,6 +264,13 @@ mfs = {k: v for k, v in sorted(m_freq.items(), key=lambda item: item[1], reverse
 
 y = [mech for mech in list(mfs.keys())]
 y.reverse()
+
+def submit(text):
+    t = int(text)
+    ax.clear()
+    ax.axvline(x=0, color='black')
+    ax.barh(y[-t:], np.array(1 - o_norm.loc[y[-t:]]['GL']))
+    ax.barh(y[-t:], - np.array(1 - o_norm.loc[y[-t:]]['AL']), color='orange')
 
 fig = plt.figure()
 fig.suptitle('AMERICAN-LIKE    GERMAN-LIKE', x=0.54, y=0.94)
@@ -328,16 +284,7 @@ ax.barh(y[-20:], - np.array(1 - o_norm.loc[y[-20:]]['AL']), color='orange')
 initial_text = '20'
 axbox = plt.axes([0.2, 0.01, 0.06, 0.03])
 text_box = TextBox(axbox, 'Top mechanics', initial=initial_text)
-
-def submit(text):
-    t = int(text)
-    ax.clear()
-    ax.axvline(x=0, color='black')
-    ax.barh(y[-t:], np.array(1 - o_norm.loc[y[-t:]]['GL']))
-    ax.barh(y[-t:], - np.array(1 - o_norm.loc[y[-t:]]['AL']), color='orange')
-
 text_box.on_submit(submit)
-
 
 new_game = ['Market', 'Loans', 'Acting']
 
