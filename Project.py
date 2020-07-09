@@ -64,25 +64,27 @@ seq = []
 for i in range(len(D)):
     seq.append(D['mechanics'][i])
 
-class callback(CallbackAny2Vec):
+# class callback(CallbackAny2Vec):
+#
+#     # Callback to print loss after each epoch
+#     def __init__(self):
+#         self.epoch = 0
+#
+#     def on_epoch_end(self, model):
+#         loss = model.get_latest_training_loss()
+#         if self.epoch == 0:
+#             print('Loss after epoch {}: {}'.format(self.epoch, loss))
+#         else:
+#             print('Loss after epoch {}: {}'.format(self.epoch, loss - self.loss_previous_step))
+#         self.epoch += 1
+#         self.loss_previous_step = loss
 
-    # Callback to print loss after each epoch
-    def __init__(self):
-        self.epoch = 0
+# model = {}
+# model = Word2Vec(seq, min_count=1, window=2)
+#
+# model.train(seq, total_examples=model.corpus_count, epochs=40, compute_loss=True, callbacks=[callback()])
 
-    def on_epoch_end(self, model):
-        loss = model.get_latest_training_loss()
-        if self.epoch == 0:
-            print('Loss after epoch {}: {}'.format(self.epoch, loss))
-        else:
-            print('Loss after epoch {}: {}'.format(self.epoch, loss - self.loss_previous_step))
-        self.epoch += 1
-        self.loss_previous_step = loss
-
-model = {}
-model = Word2Vec(seq, min_count=1, window=2)
-
-model.train(seq, total_examples=model.corpus_count, epochs=40, compute_loss=True, callbacks=[callback()])
+model = Word2Vec.load("data/mechanic2vec.model")
 
 vocab = list(model.wv.vocab)
 X = model.wv.__getitem__(vocab)

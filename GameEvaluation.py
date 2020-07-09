@@ -4,11 +4,9 @@ import numpy as np
 from gensim.models import Word2Vec
 from gensim.models.keyedvectors import KeyedVectors
 from sklearn import cluster
-from sklearn import metrics
 from sklearn.decomposition import PCA
 import matplotlib
 import matplotlib.pyplot as plt
-from matplotlib.widgets import TextBox
 import itertools
 
 D = pd.read_json("data/ggt3.json")
@@ -27,10 +25,12 @@ seq = []
 for i in range(len(D)):
     seq.append(D['mechanics'][i])
 
-model = {}
-model = Word2Vec(seq, min_count=1, window=2)
+# model = {}
+# model = Word2Vec(seq, min_count=1, window=2)
+#
+# model.train(seq, total_examples=model.corpus_count, epochs=40)
 
-model.train(seq, total_examples=model.corpus_count, epochs=40)
+model = Word2Vec.load("data/mechanic2vec.model")
 
 vocab = list(model.wv.vocab)
 X = model.wv.__getitem__(vocab)
@@ -102,30 +102,15 @@ mfs = {k: v for k, v in sorted(m_freq.items(), key=lambda item: item[1], reverse
 y = [mech for mech in list(mfs.keys())]
 y.reverse()
 
-fig = plt.figure()
-fig.suptitle('AMERICAN-LIKE    GERMAN-LIKE', x=0.54, y=0.94)
-ax = fig.add_subplot(1, 1, 1)
-plt.subplots_adjust(left=0.20, top=0.9)
-plt.axvline(x=0, color='black')
+def mechanics_ranking(top_n):
+    fig = plt.figure()
+    fig.suptitle('AMERICAN-LIKE    GERMAN-LIKE', x=0.54, y=0.94)
+    ax = fig.add_subplot(1, 1, 1)
+    plt.subplots_adjust(left=0.20, top=0.9)
+    plt.axvline(x=0, color='black')
 
-ax.barh(y[-20:], np.array(1 - o_norm.loc[y[-20:]]['GL']))
-ax.barh(y[-20:], - np.array(1 - o_norm.loc[y[-20:]]['AL']), color='orange')
-
-initial_text = '20'
-axbox = plt.axes([0.2, 0.01, 0.06, 0.03])
-text_box = TextBox(axbox, 'Top mechanics', initial=initial_text)
-
-def submit(text):
-    t = int(text)
-    ax.clear()
-    ax.axvline(x=0, color='black')
-    ax.barh(y[-t:], np.array(1 - o_norm.loc[y[-t:]]['GL']))
-    ax.barh(y[-t:], - np.array(1 - o_norm.loc[y[-t:]]['AL']), color='orange')
-
-text_box.on_submit(submit)
-
-
-new_game = ['Market', 'Loans', 'Acting']
+    ax.barh(y[-top_n:], np.array(1 - o_norm.loc[y[-top_n:]]['GL']))
+    ax.barh(y[-top_n:], - np.array(1 - o_norm.loc[y[-top_n:]]['AL']), color='orange')
 
 def plot_custom_game(ngo, ng, ngv):
     fig = plt.figure()
@@ -159,8 +144,6 @@ def evaluate_game(mechanics):
     for m in reversed(nms[:, 0]):
         print(m + ": ", '[American: ', 1 - ng[m][0], '],', '[German: ', 1 - ng[m][1], ']')
 
-evaluate_game(new_game)
-
 def game_in_space(mechanics):
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
@@ -178,5 +161,3 @@ def game_in_space(mechanics):
 
     ax.scatter(df.loc[mechanics]['x'].mean(), df.loc[mechanics]['y'].mean(), marker='*', s=50, c='m')
     ax.annotate('GAME', (df.loc[mechanics]['x'].mean(), df.loc[mechanics]['y'].mean()), c='m')
-
-game_in_space(new_game)
