@@ -1,0 +1,182 @@
+Dice Rolling
+Hand Management
+Set Collection
+Variable Player Powers
+Hexagon Grid
+Card Drafting
+Tile Placement
+Modular Board
+Simulation
+Area Majority / Influence
+Roll / Spin and Move
+Cooperative Game
+Simultaneous Action Selection
+Area Movement
+Auction/Bidding
+Action Points
+Grid Movement
+Team-Based Game
+Take That
+Memory
+Point to Point Movement
+Push Your Luck
+Pattern Building
+Worker Placement
+Deck, Bag, and Pool Building
+Player Elimination
+Trading
+Secret Unit Deployment
+Pick-up and Deliver
+Network and Route Building
+Campaign / Battle Card Driven
+Pattern Recognition
+Role Playing
+Solo / Solitaire Game
+Voting
+Storytelling
+Betting and Bluffing
+Action Queue
+Trick-taking
+Paper-and-Pencil
+Variable Phase Order
+Stock Holding
+Commodity Speculation
+Chit-Pull System
+Acting
+Enclosure
+Movement Points
+Rock-Paper-Scissors
+Scenario / Mission / Campaign Game
+Line Drawing
+Time Track
+Zone of Control
+Area-Impulse
+Ratio / Combat Results Table
+Square Grid
+Communication Limits
+Traitor Game
+Line of Sight
+Race
+End Game Bonuses
+Singing
+Measurement Movement
+Variable Setup
+Drafting
+Contracts
+Rondel
+Events
+Ladder Climbing
+Income
+Action Retrieval
+Market
+Flicking
+Real-Time
+Turn Order: Progressive
+Worker Placement, Different Worker Types
+Worker Placement with Dice Workers
+Mancala
+Victory Points as a Resource
+Ownership
+Grid Coverage
+Hidden Roles
+Legacy Game
+Increase Value of Unchosen Resources
+I Cut, You Choose
+Crayon Rail System
+Follow
+Map Addition
+Re-rolling and Locking
+Turn Order: Stat-Based
+Hidden Movement
+Investment
+Stat Check Resolution
+Stacking and Balancing
+Narrative Choice / Paragraph
+Card Play Conflict Resolution
+Action Drafting
+Map Reduction
+Loans
+Tech Trees / Tech Tracks
+Turn Order: Claim Action
+Semi-Cooperative Game
+Melding and Splaying
+Once-Per-Game Abilities
+Action/Event
+Roles with Asymmetric Information
+Connections
+Programmed Movement
+Negotiation
+Critical Hits and Failures
+Move Through Deck
+Single Loser Game
+Tug of War
+Die Icon Resolution
+Highest-Lowest Scoring
+Elapsed Real Time Ending
+Advantage Token
+Moving Multiple Units
+Track Movement
+Action Timer
+Player Judge
+Sudden Death Ending
+Hidden Victory Points
+Multiple Maps
+Targeted Clues
+Bingo
+Automatic Resource Growth
+Auction: Turn Order Until Pass
+Alliances
+Movement Template
+Auction: Sealed Bid
+Command Cards
+King of the Hill
+Turn Order: Auction
+Bias
+Resource to Move
+Deduction
+Catch the Leader
+Constrained Bidding
+Prisoner's Dilemma
+Three Dimensional Movement
+Interrupts
+Static Capture
+Minimap Resolution
+Chaining
+Auction: Dutch
+Turn Order: Pass Order
+Force Commitment
+Deck Construction
+Score-and-Reset Game
+Auction: Once Around
+Finale Ending
+Layering
+Lose a Turn
+Map Deformation
+Kill Steal
+Speed Matching
+Turn Order: Role Order
+Cube Tower
+Turn Order: Random
+Bribery
+Delayed Purchase
+Order Counters
+Closed Economy Auction
+Pieces as Map
+Auction: Dexterity
+Different Dice Movement
+Auction: Dutch Priority
+Predictive Bid
+Slide/Push
+Relative Movement
+Auction: Fixed Placement
+Random Production
+Multiple-Lot Auction
+Impulse Movement
+Hot Potato
+Selection Order Bid
+Pattern Movement
+Induction
+Physical Removal
+Auction: English
+Matching
+Passed Action Token
