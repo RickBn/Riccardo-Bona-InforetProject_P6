@@ -43,12 +43,16 @@ import itertools
      evaluate_game(new_game)
      
      Out:
+     
      American:  0.6549941489757138 
      German:  0.5351470620899863
      
      Dice Rolling:  [American:  0.9398064798932377 ], [German:  0.6359037118363173 ]
+     
      Hexagon Grid:  [American:  0.6912497778809297 ], [German:  0.4943936693345131 ]
+     
      Role Playing:  [American:  0.7201446584443325 ], [German:  0.43510646303032063 ]
+     
      Market:  [American:  0.26877567968435523 ], [German:  0.5751844041587943 ]
 
 
