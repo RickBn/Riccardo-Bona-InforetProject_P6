@@ -8,14 +8,23 @@
 -Di seguito la lista degli import necessari:
 
 import json
+
 import pandas as pd
+
 import numpy as np
+
 from gensim.models import Word2Vec
+
 from gensim.models.keyedvectors import KeyedVectors
+
 from sklearn import cluster
+
 from sklearn.decomposition import PCA
+
 import matplotlib
+
 import matplotlib.pyplot as plt
+
 import itertools
 
 
