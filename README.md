@@ -39,6 +39,7 @@ import itertools
      E.g.
      
      In:
+     
      new_game = ['Dice Rolling', 'Market', 'Hexagon Grid', 'Role Playing']
      evaluate_game(new_game)
      
