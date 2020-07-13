@@ -26,7 +26,7 @@ for i in range(len(D)):
     seq.append(D['mechanics'][i])
 
 # model = {}
-# model = Word2Vec(seq, min_count=1, window=2)
+# model = Word2Vec(seq, min_count=1, window=2, sg=1)
 #
 # model.train(seq, total_examples=model.corpus_count, epochs=40)
 
