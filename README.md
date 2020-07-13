@@ -28,7 +28,7 @@ import matplotlib.pyplot as plt
 import itertools
 
 
--Lo script fa uso di due files esterni contenuti nella cartella 'data': 'ggt3.json', contenente i dati relativi a 18800 boardgames e 'mechanic2vec.model', il modello 
+-Lo script fa uso di due files esterni contenuti nella cartella 'data': 'ggt3.json', contenente i dati relativi a 18800 boardgames e 'mechanic2vec.model', un modello  
  Word2Vec (gensim) il cui training è stato eseguito sulle meccaniche di tutti i giochi contenuti nel dataframe.
  
 -Una volta lanciato lo script è possibile utilizzare tre funzioni:
@@ -55,16 +55,16 @@ import itertools
      
      Out:
      
-     American:  0.6549941489757138 
-     German:  0.5351470620899863
+     American:  0.6036637042976677 
+     German:  0.46544516283490034 
      
-     Dice Rolling:  [American:  0.9398064798932377 ], [German:  0.6359037118363173 ]
+     Dice Rolling:  [American:  0.9077027042356596 ], [German:  0.5374427795084435 ]
      
-     Hexagon Grid:  [American:  0.6912497778809297 ], [German:  0.4943936693345131 ]
+     Hexagon Grid:  [American:  0.5739635620737565 ], [German:  0.35432375483082634 ]
      
-     Role Playing:  [American:  0.7201446584443325 ], [German:  0.43510646303032063 ]
+     Role Playing:  [American:  0.6765184953935794 ], [German:  0.28141149461690673 ]
      
-     Market:  [American:  0.26877567968435523 ], [German:  0.5751844041587943 ]
+     Market:  [American:  0.2564700554876753 ], [German:  0.6886026223834245 ]
 
 
 -    game_in_space(mechanics)
