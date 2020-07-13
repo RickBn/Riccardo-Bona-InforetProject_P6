@@ -78,10 +78,10 @@ for i in range(len(D)):
 #             print('Loss after epoch {}: {}'.format(self.epoch, loss - self.loss_previous_step))
 #         self.epoch += 1
 #         self.loss_previous_step = loss
-
-# model = {}
-# model = Word2Vec(seq, min_count=1, window=2)
 #
+# # model = {}
+# model = Word2Vec(seq, min_count=1, window=2, sg=1)
+# #
 # model.train(seq, total_examples=model.corpus_count, epochs=40, compute_loss=True, callbacks=[callback()])
 
 model = Word2Vec.load("data/mechanic2vec.model")
