@@ -64,6 +64,11 @@ seq = []
 for i in range(len(D)):
     seq.append(D['mechanics'][i])
 
+all_mechs = list(itertools.chain(*seq))
+m_freq = {m : all_mechs.count(m) for m in mechanics}
+
+mfs = {k: v for k, v in sorted(m_freq.items(), key=lambda item: item[1], reverse=True)}
+
 class callback(CallbackAny2Vec):
 
     # Callback to print loss after each epoch
@@ -83,18 +88,18 @@ model = {}
 model = Word2Vec(seq, min_count=1, window=2, sg=1)
 model.train(seq, total_examples=model.corpus_count, epochs=40, compute_loss=True, callbacks=[callback()])
 
-model = Word2Vec.load("data/mechanic2vec.model")
+# model = Word2Vec.load("data/mechanic2vec.model")
 
 vocab = list(model.wv.vocab)
-X = model.wv.__getitem__(vocab)
 
 # CLUSTERING
 
-pca = PCA(n_components=2)
-px = pca.fit_transform(X)
-
 num_clusters = 2
 kmeans = cluster.KMeans(n_clusters=num_clusters)
+
+X = model.wv.__getitem__(vocab)
+pca = PCA(n_components=2)
+px = pca.fit_transform(X)
 
 kmeans.fit(px)
 
@@ -124,7 +129,6 @@ silhouette_score = metrics.silhouette_score(px, labels, metric='euclidean')
 
 print(silhouette_score)
 
-# PLOT
 
 df = pd.DataFrame(px, index=vocab, columns=['x', 'y'])
 
@@ -165,14 +169,22 @@ ax = fig.add_subplot(1, 1, 1)
 
 ax.scatter(df['x'], df['y'], c=clusters, s=30)
 
+af = [[m, mfs[m]] for m in AL.index]
+asm = np.array(sorted(af, key=lambda x: x[1]))
+asm = asm[::-1]
+
+gf = [[m, mfs[m]] for m in GL.index]
+gsm = np.array(sorted(gf, key=lambda x: x[1]))
+gsm = gsm[::-1]
+
 for word, pos in df.iterrows():
-    if word in AL.index:
-        ax.annotate(word, pos, color='orange')
-    elif word in GL.index:
-        ax.annotate(word, pos, color='blue')
+    if word in asm[:, 0][:20]:
+        ax.annotate(word, pos, color='black')
+    elif word in gsm[:, 0][:20]:
+        ax.annotate(word, pos, color='black')
 
 for i, j in centroids:
-    ax.scatter(i, j, s=50, c='red', marker='+')
+    ax.scatter(i, j, s=50, c='red', marker='P')
 
 #NN
 
@@ -203,24 +215,6 @@ for mech in df.index:
 
 game_centers = {'american_center' : [v_a['x'].mean(), v_a['y'].mean()], 'german_center' : [v_g['x'].mean(), v_g['y'].mean()]}
 
-colors = np.where(v_m['categ'] == 'american', 'y', 'm')
-fig = plt.figure()
-ax = fig.add_subplot(1, 1, 1)
-ax.scatter(df['x'], df['y'], c=colors, s=30)
-
-for game in germans_title:
-    ax.scatter(df.loc[gm[game]]['x'].mean(), df.loc[gm[game]]['y'].mean(), marker='X')
-    ax.annotate(game, (df.loc[gm[game]]['x'].mean(), df.loc[gm[game]]['y'].mean()))
-
-
-for game in americans_title:
-    ax.scatter(df.loc[am[game]]['x'].mean(), df.loc[am[game]]['y'].mean(), marker='*')
-    ax.annotate(game, (df.loc[am[game]]['x'].mean(), df.loc[am[game]]['y'].mean()))
-
-
-ax.scatter(game_centers['american_center'][0], game_centers['american_center'][1], s=50, c='red', marker='P')
-ax.scatter(game_centers['german_center'][0], game_centers['german_center'][1], s=50, c='red', marker='P')
-
 AV = v_m[v_m['categ'] == 'american'].sort_values('dist')
 GV = v_m[v_m['categ'] == 'german'].sort_values('dist')
 
@@ -237,16 +231,30 @@ AC = AC.drop('german_center', axis=1)
 GC = m_dist[m_dist['american_center'] > m_dist['german_center']].sort_values('german_center')
 GC = GC.drop('american_center', axis=1)
 
+print('AL ', len(AL))
+print('GL ', len(GL))
+print('AC ', len(AC))
+print('GC ', len(GC))
+
 colors = []
 for mech in list(df.index):
     if mech in list(AC.index):
         colors.append('y')
     else:
-        colors.append('m')
+        colors.append('purple')
 
 fig = plt.figure()
 ax = fig.add_subplot(1, 1, 1)
 ax.scatter(df['x'], df['y'], c=colors, s=30)
+for game in germans_title:
+    ax.scatter(df.loc[gm[game]]['x'].mean(), df.loc[gm[game]]['y'].mean(), marker='X', color='blue')
+    ax.annotate(game, (df.loc[gm[game]]['x'].mean(), df.loc[gm[game]]['y'].mean()))
+
+
+for game in americans_title:
+    ax.scatter(df.loc[am[game]]['x'].mean(), df.loc[am[game]]['y'].mean(), marker='*', color='orange')
+    ax.annotate(game, (df.loc[am[game]]['x'].mean(), df.loc[am[game]]['y'].mean()))
+
 ax.scatter(game_centers['american_center'][0], game_centers['american_center'][1], s=50, c='red', marker='P')
 ax.scatter(game_centers['german_center'][0], game_centers['german_center'][1], s=50, c='red', marker='P')
 
@@ -257,11 +265,6 @@ for row in o.iterrows():
 
 o_max = max(o.max())
 o_norm = o / o_max
-
-all_mechs = list(itertools.chain(*seq))
-m_freq = {m : all_mechs.count(m) for m in o_norm.index}
-
-mfs = {k: v for k, v in sorted(m_freq.items(), key=lambda item: item[1], reverse=True)}
 
 y = [mech for mech in list(mfs.keys())]
 y.reverse()
@@ -274,7 +277,7 @@ def submit(text):
     ax.barh(y[-t:], - np.array(1 - o_norm.loc[y[-t:]]['AL']), color='orange')
 
 fig = plt.figure()
-fig.suptitle('AMERICAN-LIKE    GERMAN-LIKE', x=0.54, y=0.94)
+fig.suptitle('AMERICAN        GERMAN', x=0.54, y=0.94)
 ax = fig.add_subplot(1, 1, 1)
 plt.subplots_adjust(left=0.20, top=0.9)
 plt.axvline(x=0, color='black')
